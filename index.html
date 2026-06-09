@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday Dila 🤍</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --primary-pink: #ffb6c1;
+            --dark-pink: #d87093;
+            --light-pink: #ffe4e1;
+            --white: #ffffff;
+            --text-dark: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling on root */
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--white);
+            color: var(--text-dark);
+        }
+
+        /* --- Audio Tag (Hidden) --- */
+        #bgm { display: none; }
+
+        /* --- Global Scene Setup --- */
+        .scene {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            opacity: 0; pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 10;
+        }
+        
+        .scene.active {
+            opacity: 1; pointer-events: auto;
+        }
+
+        /* --- Global Backgrounds --- */
+        #romantic-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            opacity: 0; z-index: 1; pointer-events: none;
+            transition: opacity 2s ease-in-out;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffc0cb 50%, #ffb6c1 100%);
+        }
+
+        /* --- Particle Systems --- */
+        #particles-layer { position: absolute; width: 100%; height: 100%; top: 0; left: 0; overflow: hidden; }
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        /* --- Common UI Components --- */
+        .btn {
+            padding: 12px 30px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.4);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--dark-pink);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 30px;
+        }
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.2);
+            padding: 40px;
+            width: 90vw;
+            max-width: 700px;
+        }
+
+        /* --- SCENE 1: Typewriter --- */
+        #scene1 {
+            background-color: #ffffff;
+            z-index: 20;
+        }
+        .typewriter-container {
+            width: 90%;
+            max-width: 800px;
+            min-height: 50vh;
+            text-align: left;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+        #btn-intro {
+            opacity: 0; pointer-events: none; transform: translateY(20px);
+        }
+
+        /* --- SCENE 2: Countdown --- */
+        .countdown-wrapper {
+            display: flex; justify-content: center; align-items: center;
+        }
+        #countdown-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 8rem;
+            color: var(--white);
+            text-shadow: 0 0 30px rgba(255, 105, 180, 0.8);
+            font-weight: 700;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- SCENE 3: Magical Letter (3D Envelope) --- */
+        .envelope-wrapper {
+            position: relative; width: 350px; height: 250px; perspective: 1200px;
+        }
+        .envelope-body {
+            position: absolute; width: 100%; height: 100%;
+            background: var(--white); border-radius: 10px;
+            box-shadow: 0 20px 50px rgba(216, 112, 147, 0.2);
+        }
+        .flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 65%;
+            transform-origin: top; z-index: 4;
+            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .envelope-front-bottom {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, #ffb6c1 0%, rgba(255,182,193,0.5) 100%);
+            clip-path: polygon(0 40%, 50% 100%, 100% 40%, 100% 100%, 0 100%);
+            z-index: 3; border-radius: 0 0 10px 10px;
+        }
+        .letter {
+            position: absolute; top: 10px; left: 5%; width: 90%; height: 90%;
+            background: rgba(255,255,255,0.95); z-index: 2;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px; text-align: center; border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .envelope-wrapper.open .flap { transform: rotateX(180deg); z-index: 1; }
+        .envelope-wrapper.open .letter { 
+            transform: translateY(-160px) scale(1.15); z-index: 5; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15); 
+        }
+        .letter-title { 
+            font-family: 'Playfair Display'; font-size: 1.4rem; color: var(--dark-pink); 
+            margin-bottom: 10px; opacity: 0; transition: opacity 1s 1.5s; 
+        }
+        .letter-content { 
+            font-size: 0.85rem; color: #555; opacity: 0; transition: opacity 1s 1.5s; 
+        }
+        #btn-scene3 { opacity: 0; transition: opacity 1s 2s; pointer-events: none; }
+        .envelope-wrapper.open .letter-title, .envelope-wrapper.open .letter-content, .envelope-wrapper.open #btn-scene3 { 
+            opacity: 1; pointer-events: auto; 
+        }
+
+        /* --- SCENE 4: Surat dari Aku --- */
+        #surat2-text p {
+            margin-bottom: 12px;
+            opacity: 0; /* Handled by GSAP */
+        }
+
+        /* --- Responsive Media Queries --- */
+        @media (max-width: 768px) {
+            .typewriter-container { font-size: 0.95rem; }
+            .envelope-wrapper { transform: scale(0.85); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop>
+        <source src="" type="audio/mpeg">
+    </audio>
+
+    <div id="romantic-bg">
+        <div id="particles-layer"></div>
+    </div>
+
+    <div id="scene1" class="scene active">
+        <div class="typewriter-container" id="typewriter"></div>
+        <button id="btn-intro" class="btn" onclick="goToScene('scene1', 'scene2', 3000)">Apakah kamu sudah selesai membaca? 💌</button>
+    </div>
+
+    <div id="scene2" class="scene">
+        <div class="countdown-wrapper">
+            <div id="countdown-text">3</div>
+        </div>
+    </div>
+
+    <div id="scene3" class="scene">
+        <div class="envelope-wrapper" id="envelope">
+            <div class="envelope-body">
+                <svg class="flap" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <polygon points="0,0 100,0 50,60" fill="#f4c2c2" stroke="#ffb6c1" stroke-width="0.5"/>
+                </svg>
+                <div class="envelope-front-bottom"></div>
+                <div class="letter">
+                    <h2 class="letter-title">Ni Kadek Dila Inka Dewi</h2>
+                    <p class="letter-content">Hari ini adalah hari spesial kamu ✨<br><br>Hari ketika dunia mendapatkan seseorang yang lucu, random, menggemaskan, dan selalu berhasil bikin hari-hari terasa lebih berwarna.</p>
+                    <button id="btn-scene3" class="btn" onclick="goToScene('scene3', 'scene4')" style="padding: 8px 20px; font-size: 0.9rem;">Selanjutnya 🤍</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="scene4" class="scene">
+        <div class="glass-card">
+            <h2 style="font-family: 'Playfair Display'; color: var(--dark-pink); margin-bottom: 25px; text-align: center; font-size: 1.8rem;">Surat dari Aku 🤍</h2>
+            <div id="surat2-text" style="font-size: 0.95rem; color: #444; line-height: 1.7; text-align: left;"></div>
+            <div style="text-align: center;">
+                <button id="btn-galaxy" class="btn" onclick="window.location.href='https://dwwindhu02.github.io/Galaksii/'" style="opacity:0; pointer-events:none;">Menuju Angkasa Kita 🌌</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. TYPEWRITER EFFECT ---
+        const introText = `Ciee berharap yaa,
+kanggoin aku ngasinya gini,
+intinyaa selamat ulang tahun ya dilaa 🥳
+ga nyangka aja kamu bisa bertahan hidup sampai umur segini padahal kadang suka bingung sendiri sama yang kamu omongin 😭
+semoga di umur yang baru ini tinggi badan ikut nambah, kecerdasan ikut nambah, dan kemampuan ngambil keputusan juga ikut nambah.
+pokoknya jangan manyun teruss.
+umur boleh nambahh tapii cowoknya gaboleh nambah cukup aku aja ahhahhahahahhaha
+tapi hari ini spesial banget karena dunia lagi merayakan kelahiran satu orang yang hobi ketawa sendiri, suka random, dan anehh.
+semoga makin dewasa yaa, walaupun jujur aja aku masih sulit membayangkannya 😔🙏
+nikmatin ulang tahun kamu.
+setahun sekali doang kok kamu boleh merasa spesial, besok balik biasa lagi.
+udah ya, jangan seneng dulu.
+umur nambah berarti makin tuaak tauuu 😭`;
+
+        let charIndex = 0;
+        const typingSpeed = 35; 
+        
+        function typeWriter() {
+            if (charIndex < introText.length) {
+                let char = introText.charAt(charIndex);
+                const tw = document.getElementById("typewriter");
+                if (char === '\n') {
+                    tw.innerHTML += "<br>";
+                } else {
+                    tw.innerHTML += char;
+                }
+                charIndex++;
+                setTimeout(typeWriter, typingSpeed);
+                // Auto scroll
+                const sc1 = document.getElementById('scene1');
+                sc1.scrollTop = sc1.scrollHeight;
+            } else {
+                gsap.to("#btn-intro", { opacity: 1, y: 0, duration: 1.5, pointerEvents: "auto", delay: 0.5 });
+            }
+        }
+
+        window.onload = () => {
+            setTimeout(typeWriter, 1000);
+        };
+
+        // --- 2. CINEMATIC SCENE TRANSITION ---
+        function goToScene(fromId, toId, duration = 1500) {
+            const fromEl = document.getElementById(fromId);
+            const toEl = document.getElementById(toId);
+
+            // Audio Autoplay Workaround trigger on first click
+            if(fromId === 'scene1') {
+                document.getElementById('bgm').load();
+            }
+
+            // Cinematic blur out
+            gsap.to(fromEl, { 
+                opacity: 0, 
+                filter: "blur(20px)", 
+                duration: duration / 1000, 
+                ease: "power2.inOut",
+                onComplete: () => {
+                    fromEl.classList.remove('active');
+                    fromEl.style.filter = "none";
+                    
+                    toEl.classList.add('active');
+                    gsap.fromTo(toEl, 
+                        { opacity: 0, filter: "blur(20px) brightness(0.5)" }, 
+                        { opacity: 1, filter: "blur(0px) brightness(1)", duration: 1.5, ease: "power2.out" }
+                    );
+
+                    // Execute specific Scene events
+                    if (toId === 'scene2') startCountdown();
+                    if (toId === 'scene3') setTimeout(() => document.getElementById('envelope').classList.add('open'), 1000);
+                    if (toId === 'scene4') showSurat2();
+                }
+            });
+        }
+
+        // --- 3. SCENE 2 LOGIC (Countdown & Particles) ---
+        function startCountdown() {
+            // Spawn background romantic particles
+            document.getElementById('romantic-bg').style.opacity = '1';
+            const layer = document.getElementById('particles-layer');
+            const emojis = ['🌸', '✨', '🤍', '💖', '🌺'];
+            for(let i=0; i<35; i++) {
+                let p = document.createElement('div');
+                p.className = 'floating-element';
+                p.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = (Math.random() * 100 + 100) + 'vh'; 
+                p.style.fontSize = (Math.random() * 1.5 + 0.5) + 'rem';
+                p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                p.style.opacity = Math.random() * 0.5 + 0.3;
+                layer.appendChild(p);
+            }
+
+            // Countdown Logic
+            let count = 3;
+            const countEl = document.getElementById('countdown-text');
+            const interval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countEl.innerText = count;
+                    countEl.style.animation = 'none';
+                    void countEl.offsetWidth; 
+                    countEl.style.animation = 'popIn 1s ease-out';
+                } else {
+                    clearInterval(interval);
+                    document.getElementById('bgm').play().catch(e => console.log('Audio Autoplay Blocked'));
+                    goToScene('scene2', 'scene3');
+                }
+            }, 1200);
+        }
+
+        // --- 4. SCENE 4 LOGIC (Surat 2 GSAP) ---
+        function showSurat2() {
+            const surat2Text = `happy birthday yaa sayanggkuuu cintaaakuuu🤍🎂
+cieee yang umurnyaa nambahh.
+semoga di umur yang baru ini kamu selalu sehat, selalu bahagia, makin banyak hal baik yang dateng ke hidup kamu, dan semua yang kamu cita-citain bisa tercapai satu-satuu 🥺✨
+makasii yaa udah hadir di hidup aku, udah mau nemenin aku, dengerin cerita-cerita aku, dan selalu jadi orang yang spesial buat aku.
+aku seneng banget bisa kenal kamu sampai sedeket iniii 🤍
+hari ini jangan mikirin yang bikin sedih yaa, fokus bahagia ajaa.
+kan hari ini hari kamuuu.
+semoga tahun ini lebih banyak tawa daripada nangisnya, lebih banyak bahagianya daripada capeknyaa.
+sekali lagii, selamat ulang tahun yaa sayangg.
+semoga panjang umur, sehat selalu, dan semoga aku masih boleh nemenin kamu di ulang tahun-ulang tahun berikutnyaa 🤍🥺
+sayang aku ke kamu banyaaakkkk, lebih banyak dari yang bisa aku tulis di chat ini.`;
+
+            const container = document.getElementById('surat2-text');
+            container.innerHTML = '';
+            const paragraphs = surat2Text.split('\n');
+            
+            paragraphs.forEach((line, index) => {
+                const p = document.createElement('p');
+                p.innerText = line;
+                container.appendChild(p);
+                gsap.fromTo(p, 
+                    { opacity: 0, y: 15 }, 
+                    { opacity: 1, y: 0, duration: 1, delay: index * 0.8, ease: "power2.out" }
+                );
+            });
+
+            // Memunculkan tombol redirect ke Galaksi setelah animasi teks selesai
+            gsap.to("#btn-galaxy", { 
+                opacity: 1, duration: 1.5, delay: paragraphs.length * 0.8 + 0.5, pointerEvents: "auto" 
+            });
+        }
+    </script>
+</body>
+</html>
